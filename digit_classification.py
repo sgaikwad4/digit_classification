@@ -52,6 +52,9 @@ ax.set_ylim(0, 28)
 fig.canvas.mpl_connect('button_press_event', on_press)
 fig.canvas.mpl_connect('button_release_event', on_release)
 fig.canvas.mpl_connect('motion_notify_event', on_move)
+fig.canvas.mpl_connect("key_press_event", on_key)
+
+plt.title('Press "C" to clear')
 
 plt.show()
 
