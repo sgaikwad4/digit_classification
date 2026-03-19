@@ -2,17 +2,16 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-# Drawing function
+# Drawing state
 drawing = False
-x_points = []
-y_points = []
+
+# Creatign 28x28 pixel canvas
+canvas = np.zeros((28,28))
 
 # Function for drawing when holding mouse button
 def on_press(event):
-    global drawing, x_points, y_points
+    global drawing
     drawing = True
-    x_points = []   # start a new line
-    y_points = []
 
 # Function to stop drawing when mouse is released
 def on_release(event):
@@ -22,32 +21,32 @@ def on_release(event):
 # Draw when mouse is moving
 def on_move(event):
     if drawing and event.xdata is not None and event.ydata is not None:
-        x_points.append(event.xdata)
-        y_points.append(event.ydata)
+        x = int(event.xdata)
+        y = int(event.ydata)
 
-        ax.plot(x_points, y_points,"black", linewidth=6.5)
-        fig.canvas.draw()
+        # draw brush (3x3)
+        for i in range(-1,2):
+            for j in range(-1,2):
+                if 0 <= y+i < 28 and 0 <= x+j < 28:
+                    canvas[y+i][x+j] = 1
+
+        img.set_data(canvas)
+        fig.canvas.draw_idle()        
 
 # Function to clear canvas
 def on_key(event):
-    global x_points, y_points
+    global canvas
     
-    if event.key == 'c':   # press 'c' to clear
-        ax.cla()           # clear the axes
-        ax.set_xlim(0, 28)
-        ax.set_ylim(0, 28)
-        
-        x_points = []
-        y_points = []
-        
-        fig.canvas.draw()
-
-
+    if event.key == 'c':
+        canvas[:] = 0
+        img.set_data(canvas)
+        fig.canvas.draw_idle()
 
 fig, ax = plt.subplots()
+img = ax.imshow(canvas, cmap="gray", vmin=0, vmax=1)
 
-ax.set_xlim(0, 28)
-ax.set_ylim(0, 28)
+ax.set_xlim(0,28)
+ax.set_ylim(28,0)
 
 fig.canvas.mpl_connect('button_press_event', on_press)
 fig.canvas.mpl_connect('button_release_event', on_release)
