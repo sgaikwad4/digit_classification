@@ -8,6 +8,10 @@ drawing = False
 # Creatign 28x28 pixel canvas
 canvas = np.zeros((28,28))
 
+# Lists
+dataset = [] # stores images
+labels = [] # stores correct numbers (ground truth)
+
 # Function for drawing when holding mouse button
 def on_press(event):
     global drawing
@@ -33,15 +37,28 @@ def on_move(event):
         img.set_data(canvas)
         fig.canvas.draw_idle()        
 
-# Function to clear canvas
 def on_key(event):
     global canvas
     
+    # code to clear
     if event.key == 'c':
         canvas[:] = 0
         img.set_data(canvas)
         fig.canvas.draw_idle()
+        
+    # code to save digit
+    elif event.key in "0123456789":
 
+        label = int(event.key)
+
+        # flatten 28x28 into 784
+        sample = canvas.flatten()
+
+        dataset.append(sample)
+        labels.append(label)
+
+        print("Saved:", label, "| Total samples:", len(dataset))
+    
 fig, ax = plt.subplots()
 img = ax.imshow(canvas, cmap="gray", vmin=0, vmax=1)
 
