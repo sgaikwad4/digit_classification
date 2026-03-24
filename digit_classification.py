@@ -75,7 +75,32 @@ plt.title('Press "C" to clear')
 plt.show()
 
 # Neural network
+input_size = 784
+hidden_size = 64
+output_size = 10
+lr = 0.05
 
+np.random.seed(0)
+
+# Initialize weights and biases
+W1 = np.random.randn(input_size, hidden_size)*0.1
+b1 = np.zeros((1,hidden_size))
+W2 = np.random.randn(hidden_size, output_size)*0.1
+b2 = np.zeros((1,output_size))
+
+# Activation functions
+def sigmoid(x):
+    return 1/(1+np.exp(-x))
+
+def softmax(x):
+    e = np.exp(x - np.max(x))
+    return e/e.sum(axis=1,keepdims=True)
+
+# Forward pass (gives prediction)
+def forward(X):
+    a1 = sigmoid(X@W1 + b1)
+    a2 = softmax(a1@W2 + b2)
+    return a1,a2
 # Cost or loss function
 
 # Training function
