@@ -101,7 +101,18 @@ def forward(X):
     a1 = sigmoid(X@W1 + b1)
     a2 = softmax(a1@W2 + b2)
     return a1,a2
+
 # Cost or loss function
+def compute_loss(y_pred, y_true):
+    m = y_true.shape[0]
+    
+    # One-hot encode labels
+    y_onehot = np.zeros((m, 10))
+    y_onehot[np.arange(m), y_true] = 1
+
+    # Avoid log(0)
+    loss = -np.sum(y_onehot * np.log(y_pred + 1e-8)) / m
+    return loss, y_onehot
 
 # Training function
 
