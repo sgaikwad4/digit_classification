@@ -115,6 +115,40 @@ def compute_loss(y_pred, y_true):
     return loss, y_onehot
 
 # Training function
+def train(X, y, epochs=200):
+    global W1, b1, W2, b2
 
-# Backpropagation (Updating weights) function
+    for epoch in range(epochs):
 
+        # forward pass
+        a1 = sigmoid(X @ W1 + b1)
+        a2 = softmax(a1 @ W2 + b2)
+
+        # finding loss
+        loss, y_onehot = compute_loss(a2, y)
+
+        m = X.shape[0]
+
+        # backprop
+
+        # Output layer error
+        dz2 = (a2 - y_onehot) / m
+        dW2 = a1.T @ dz2
+        db2 = np.sum(dz2, axis=0, keepdims=True)
+
+        # Hidden layer error
+        da1 = dz2 @ W2.T
+        dz1 = da1 * a1 * (1 - a1)   # sigmoid derivative
+
+        dW1 = X.T @ dz1
+        db1 = np.sum(dz1, axis=0, keepdims=True)
+
+        # update weights
+        W1 = W1 - (lr * dW1)
+        b1 = b1 - (lr * db1)
+        W2 = W2 - (lr * dW2)
+        b2 = b2 - (lr * db2)
+
+        # logging
+        if epoch % 20 == 0:
+            print(f"Epoch {epoch}, Loss: {loss:.4f}")
