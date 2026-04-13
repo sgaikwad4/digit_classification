@@ -58,21 +58,15 @@ def on_key(event):
         labels.append(label)
 
         print("Saved:", label, "| Total samples:", len(dataset))
+        
+    elif event.key == 'enter':
+        sample = canvas.flatten().reshape(1, -1)
+
+        prediction = predict(sample)[0]
+
+        print("Prediction:", prediction)
     
-fig, ax = plt.subplots()
-img = ax.imshow(canvas, cmap="gray", vmin=0, vmax=1)
 
-ax.set_xlim(0,28)
-ax.set_ylim(28,0)
-
-fig.canvas.mpl_connect('button_press_event', on_press)
-fig.canvas.mpl_connect('button_release_event', on_release)
-fig.canvas.mpl_connect('motion_notify_event', on_move)
-fig.canvas.mpl_connect("key_press_event", on_key)
-
-plt.title('Press "C" to clear')
-
-plt.show()
 
 # Neural network
 input_size = 784
@@ -152,3 +146,23 @@ def train(X, y, epochs=200):
         # logging
         if epoch % 20 == 0:
             print(f"Epoch {epoch}, Loss: {loss:.4f}")
+
+# Prediction function
+def predict(X):
+    _, probs = forward(X)
+    return np.argmax(probs, axis=1)
+
+fig, ax = plt.subplots()
+img = ax.imshow(canvas, cmap="gray", vmin=0, vmax=1)
+
+ax.set_xlim(0,28)
+ax.set_ylim(28,0)
+
+fig.canvas.mpl_connect('button_press_event', on_press)
+fig.canvas.mpl_connect('button_release_event', on_release)
+fig.canvas.mpl_connect('motion_notify_event', on_move)
+fig.canvas.mpl_connect("key_press_event", on_key)
+
+plt.title('Press "C" to clear')
+
+plt.show()
