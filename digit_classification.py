@@ -12,6 +12,20 @@ canvas = np.zeros((28,28))
 dataset = [] # stores images
 labels = [] # stores correct numbers (ground truth)
 
+# Neural network
+input_size = 784
+hidden_size = 64
+output_size = 10
+lr = 0.05
+
+np.random.seed(0)
+
+# Initialize weights and biases
+W1 = np.random.randn(input_size, hidden_size)*0.1
+b1 = np.zeros((1,hidden_size))
+W2 = np.random.randn(hidden_size, output_size)*0.1
+b2 = np.zeros((1,output_size))
+
 # Function for drawing when holding mouse button
 def on_press(event):
     global drawing
@@ -58,7 +72,8 @@ def on_key(event):
         labels.append(label)
 
         print("Saved:", label, "| Total samples:", len(dataset))
-        
+    
+    # key to enter prediction
     elif event.key == 'enter':
         sample = canvas.flatten().reshape(1, -1)
 
@@ -66,21 +81,15 @@ def on_key(event):
 
         print("Prediction:", prediction)
     
-
-
-# Neural network
-input_size = 784
-hidden_size = 64
-output_size = 10
-lr = 0.05
-
-np.random.seed(0)
-
-# Initialize weights and biases
-W1 = np.random.randn(input_size, hidden_size)*0.1
-b1 = np.zeros((1,hidden_size))
-W2 = np.random.randn(hidden_size, output_size)*0.1
-b2 = np.zeros((1,output_size))
+    # key to train 
+    elif event.key == 't':
+        if len(dataset) > 0:
+            X = np.array(dataset)
+            y = np.array(labels)
+            train(X, y, epochs=200)
+            print("Training complete!")
+        else:
+            print("No data to train on.")
 
 # Activation functions
 def sigmoid(x):
@@ -143,15 +152,12 @@ def train(X, y, epochs=200):
         W2 = W2 - (lr * dW2)
         b2 = b2 - (lr * db2)
 
-        # logging
-        if epoch % 20 == 0:
-            print(f"Epoch {epoch}, Loss: {loss:.4f}")
-
 # Prediction function
 def predict(X):
     _, probs = forward(X)
     return np.argmax(probs, axis=1)
 
+# canvas plotting
 fig, ax = plt.subplots()
 img = ax.imshow(canvas, cmap="gray", vmin=0, vmax=1)
 
